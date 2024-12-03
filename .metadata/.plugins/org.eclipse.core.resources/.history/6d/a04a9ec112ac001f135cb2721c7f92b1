@@ -1,0 +1,30 @@
+package com.example.choreTracker.repositories;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+
+import com.example.choreTracker.models.Job;
+import com.example.choreTracker.models.Job.JobStatus;
+
+public interface JobRepository extends CrudRepository<Job, Long> {
+    
+	
+	// Find jobs by status (e.g., available or claimed)
+    List<Job> findByStatus(JobStatus status);
+    // Find all jobs assigned to a specific user
+    List<Job> findByAssignedToId(Long userId);
+    
+    @Query("SELECT j FROM Job j WHERE j.assignedTo.id = :userId AND j.completed = false")
+    List<Job> findJobsByUserIdAndNotCompleted(@Param("userId") Long userId);
+    // Find jobs that are not assigned to a user or are assigned to a different user
+    List<Job> findByAssignedToIsNullOrAssignedTo_IdNot(Long userId);
+    
+    // Optionally, find jobs that are completed or not
+    List<Job> findByCompleted(Boolean completed);
+    
+    // Optionally, you can add other custom query methods depending on your needs
+}
+

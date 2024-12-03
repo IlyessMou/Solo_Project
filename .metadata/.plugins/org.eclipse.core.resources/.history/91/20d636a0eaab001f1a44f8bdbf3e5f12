@@ -1,0 +1,67 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Job</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit Job</h1>
+    <form action="/jobs/${job.id}/update" method="post">
+        <label>Title:</label>
+        <input type="text" name="title" value="${job.title}" required />
+        <br />
+        <label>Description:</label>
+        <textarea name="description" required>${job.description}</textarea>
+        <br />
+        <label>Location:</label>
+        <input type="text" id="location" name="location" value="${job.location}" readonly />
+        <br />
+        <label>Latitude:</label>
+        <input type="text" id="latitude" name="latitude" value="${job.latitude}" readonly />
+        <br />
+        <label>Longitude:</label>
+        <input type="text" id="longitude" name="longitude" value="${job.longitude}" readonly />
+        <br />
+        <button type="submit">Update Job</button>
+    </form>
+
+    <div id="map"></div>
+
+    <script>
+        const job = {
+            lat: ${job.latitude},
+            lng: ${job.longitude}
+        };
+
+        const map = L.map('map').setView([job.lat, job.lng], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        const marker = L.marker([job.lat, job.lng], { draggable: true }).addTo(map);
+
+        marker.on('dragend', function (event) {
+            const position = marker.getLatLng();
+            document.getElementById('latitude').value = position.lat;
+            document.getElementById('longitude').value = position.lng;
+
+            // Optionally use a geocoding API to convert lat/lng to a human-readable address
+            document.getElementById('location').value = `Lat: ${position.lat}, Lng: ${position.lng}`;
+        });
+    </script>
+</body>
+</html>
+    

@@ -1,0 +1,60 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Protest+Revolution&family=Sevillana&display=swap" rel="stylesheet">
+    <title>Completed Jobs</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/button.css">
+    
+    <style>
+        /* Add any custom styling if needed */
+    </style>
+</head>
+<body>
+
+    <div style="border: 5px solid lightblue; background-image:url('https://media.istockphoto.com/id/1397400329/vector/millimeter-graph-paper-grid-geometric-pattern.jpg?s=612x612&w=0&k=20&c=IivJpxAiY-k6jBffYzAnt7m2B4PNuqKj-W4Z3hA-bJ8='); border-radius: 5%; padding: 60px;">
+        <div class="navigation">
+            <a class="button" href="/logout">
+                <img src="ZNC5xcYp3E4btPSjAj43EL5CMDnGsVmuUnTJFm+YZuk6aY044h8gu+Z9AG3GRjh+isshERu9AbX1Qg4+3WXLwL0Lx49kwkTJkyYMGHChAkTJkyYMGHChAkTuuL/i6bBvI5MD9kAAAAASUVORK5CYII=">
+                <div class="logout">LOGOUT</div>
+            </a>
+        </div>
+        
+        <h2 class="sevillana-regular" style="place-self: center; font-family: Sevillana, cursive; font-weight: 400; font-style: normal;font-size: xxx-large; color: lightseagreen;margin-top: 85px;">Completed Jobs</h2>
+        
+        <table style="width: 100%; border: 1px solid lightblue;">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                <th>Description</th>
+                <th>Location</th>
+                <th>Reward</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Displaying completed jobs dynamically -->
+                <c:forEach var="job" items="${completedJobs}">
+                    <tr>
+                        <td>${job.jobId}</td>
+                        <td>${job.description}</td>
+                        <td>${job.address}</td>
+                        <td>${job.category}</td>
+                        <td>${job.location}</td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+
+    </div>
+
+</body>
+</html>

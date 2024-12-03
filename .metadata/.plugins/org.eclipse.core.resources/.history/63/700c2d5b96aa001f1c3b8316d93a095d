@@ -1,0 +1,16 @@
+package com.example.choreTracker.repositories;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+import com.example.choreTracker.models.Job;
+
+@Repository
+public interface JobRepository extends CrudRepository<Job, Long> {
+	// Fetch jobs assigned to a specific user
+    List<Job> findByAssignedUsers_Id(Long userId);
+
+    // Fetch jobs not assigned to a specific user
+    @Query("SELECT j FROM Job j WHERE :userId NOT MEMBER OF j.assignedUsers")
+    List<Job> findByAssignedUsersNotContaining(@Param("userId") Long userId);
+}

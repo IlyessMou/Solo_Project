@@ -1,0 +1,17 @@
+package com.example.choreTracker.repositories;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+import com.example.choreTracker.models.Job;
+
+@Repository
+public interface JobRepository extends CrudRepository<Job, Long> {
+    // Find all jobs not yet claimed by the user
+    List<Job> findByAssignedUserIsNullOrAssignedUserIdNot(Long userId);
+
+    // Find all jobs claimed by a specific user
+    List<Job> findByAssignedUserId(Long userId);
+}

@@ -1,0 +1,3 @@
+INDEX VERSION 1.134
+C:\Users\user\Desktop\solo\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2455801716.index
+\ChoreTracker\src\main\java

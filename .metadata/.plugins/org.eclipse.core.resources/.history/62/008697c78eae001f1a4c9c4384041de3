@@ -1,0 +1,63 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Protest+Revolution&family=Sevillana&display=swap" rel="stylesheet">
+    <title>Completed Jobs</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/button.css">
+    
+    <style>
+       
+    </style>
+</head>
+<body>
+    <h1 class='protest-revolution-regula' style='font-family: "Protest Revolution", sans-serif; font-weight: 400; font-size: xxx-large; color: azure;'>
+        Welcome, ${user.username}
+    </h1>
+
+    <div style="border: 5px solid lightblue; background-image:url('https://media.istockphoto.com/id/1397400329/vector/millimeter-graph-paper-grid-geometric-pattern.jpg?s=612x612&w=0&k=20&c=IivJpxAiY-k6jBffYzAnt7m2B4PNuqKj-W4Z3hA-bJ8='); border-radius: 5%; padding: 60px;">
+        <div class="navigation">
+            <a class="button" href="/logout">
+                <img src="data:image/png;base64,..." alt="Logout">
+                Logout
+            </a>
+        </div>
+
+        <!-- Jobs List Section (example) -->
+        <h2>Completed Jobs</h2>
+        <table style="width: 100%; border: 1px solid lightblue;">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Completed Date</th>
+                    <th>Status</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Example for displaying jobs dynamically -->
+                <c:forEach var="job" items="${jobs}">
+                    <tr>
+                        <td>${job.title}</td>
+                        <td>${job.completedDate}</td>
+                        <td>${job.status}</td>
+                        <td><a href="/jobs/${job.id}">View Details</a></td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+
+        <!-- Map Section (optional) -->
+        <div id="map"></div>
+    </div>
+
+</body>
+</html>

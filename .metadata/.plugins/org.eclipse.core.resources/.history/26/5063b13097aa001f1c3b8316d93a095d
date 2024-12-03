@@ -1,0 +1,40 @@
+package com.example.choreTracker.services;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.example.choreTracker.models.Job;
+import com.example.choreTracker.repositories.JobRepository;
+
+@Service
+public class JobService {
+    private final JobRepository jobRepository;
+
+    public JobService(JobRepository jobRepository) {
+        this.jobRepository = jobRepository;
+    }
+
+    public Job saveJob(Job job) {
+        return jobRepository.save(job);
+    }
+
+    public Job findJobById(Long id) {
+        return jobRepository.findById(id).orElse(null);
+    }
+
+    public void removeJobFromUser(Job job) {
+        job.setAssignedTo(null);
+        jobRepository.save(job);
+    }
+    
+    // Find jobs assigned to a specific user
+    public List<Job> findJobsByUserId(Long userId) {
+        return jobRepository.findByAssignedUsers_Id(userId);
+    }
+
+    // Find jobs not yet assigned to the user
+    public List<Job> findAvailableJobs(Long userId) {
+        return jobRepository.findByAssignedUsersNotContaining(userId);
+    }
+}

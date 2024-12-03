@@ -1,0 +1,111 @@
+package com.example.choreTracker.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.choreTracker.models.Job;
+import com.example.choreTracker.models.Job.JobStatus;
+import com.example.choreTracker.models.User;
+import com.example.choreTracker.repositories.JobRepository;
+import com.example.choreTracker.repositories.UserRepository;
+
+@Service
+public class JobService {
+
+    private final JobRepository jobRepository;
+
+    public JobService(JobRepository jobRepository) {
+        this.jobRepository = jobRepository;
+    }
+
+    public Job saveJob(Job job) {
+        return jobRepository.save(job);
+    }
+
+    public void update(Job job) {
+        jobRepository.save(job);
+    }
+
+    public Job findById(Long id) {
+        return jobRepository.findById(id).orElse(null);
+    }
+
+    public void removeJobFromUser(Job job) {
+        job.setAssignedTo(null);
+        job.setStatus(JobStatus.AVAILABLE);  // Set status to AVAILABLE
+        jobRepository.save(job);
+    }
+
+    // Find jobs assigned to a specific user
+    public List<Job> findJobsByUserId(Long userId) {
+        return jobRepository.findByAssignedToId(userId);
+    }
+
+    // Find available jobs (jobs that are not assigned or claimed)
+    public List<Job> findAvailableJobs(Long userId) {
+        // Only return jobs that are AVAILABLE and not claimed
+        return jobRepository.findByStatus(JobStatus.AVAILABLE);
+    }
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // Method to assign a job to a user
+    public void assignJobToUser(Long jobId, Long userId) {
+        // Find the job by its ID
+        Job job = jobRepository.findById(jobId).orElse(null);
+        if (job == null) {
+            throw new IllegalArgumentException("Job not found");
+        }
+
+        // Find the user by their ID
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // Assign the job to the user
+        job.setAssignedTo(user);
+        job.setStatus(JobStatus.CLAIMED);  // Set status to CLAIMED
+
+        // Save the updated job
+        jobRepository.save(job);
+    }
+
+    // Method to complete a job by a user
+    public Job completeJob(Long jobId, Long userId) {
+        // Find the job by its ID
+        Job job = jobRepository.findById(jobId).orElse(null);
+
+        // Check if the job exists, and the job is assigned to the user attempting to complete it
+        if (job != null && job.getAssignedTo() != null && job.getAssignedTo().getId().equals(userId)) {
+            // Mark the job as completed
+            job.setCompleted(true);
+            job.setStatus(JobStatus.COMPLETED);  // Set status to COMPLETED
+
+            // Fetch the assigned user and add the job's reward to their balance
+            User assignedUser = job.getAssignedTo();
+            assignedUser.addToBalance(job.getReward()); // Add the reward to the assigned user's balance
+
+            // Save the updated job and user to the database
+            jobRepository.save(job); // Save the job to mark it as completed
+            userRepository.save(assignedUser); // Save the assigned user to update the balance
+
+            return job; // Return the updated job
+        }
+
+        // Return null if the job doesn't exist or the user is not authorized to complete it
+        return null;
+    }
+
+    public void delete(Long id) {
+        // Check if the job exists in the repository
+        if (jobRepository.existsById(id)) {
+            jobRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Job not found");
+        }
+    }
+}

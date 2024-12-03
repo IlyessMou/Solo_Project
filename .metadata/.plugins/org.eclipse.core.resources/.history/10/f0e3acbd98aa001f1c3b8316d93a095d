@@ -1,0 +1,71 @@
+package com.example.choreTracker.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.choreTracker.models.Job;
+import com.example.choreTracker.models.User;
+import com.example.choreTracker.repositories.JobRepository;
+import com.example.choreTracker.repositories.UserRepository;
+
+@Service
+public class JobService {
+    private final JobRepository jobRepository;
+
+    public JobService(JobRepository jobRepository) {
+        this.jobRepository = jobRepository;
+    }
+
+    public Job saveJob(Job job) {
+        return jobRepository.save(job);
+    }
+    public void update(Job job) {
+        jobRepository.save(job);
+    }
+
+    public Job findById(Long id) {
+        return jobRepository.findById(id).orElse(null);
+    }
+
+    public void removeJobFromUser(Job job) {
+        job.setAssignedTo(null);
+        jobRepository.save(job);
+    }
+    
+    // Find jobs assigned to a specific user
+    public List<Job> findJobsByUserId(Long userId) {
+        return jobRepository.findByAssignedUsers_Id(userId);
+    }
+
+    // Find jobs not yet assigned to the user
+    public List<Job> findAvailableJobs(Long userId) {
+        return jobRepository.findByAssignedUsersNotContaining(userId);
+    }
+    @Autowired
+    private UserRepository userRepository;
+
+    // Other methods...
+
+    // Method to assign a job to a user
+    public void assignJobToUser(Long jobId, Long userId) {
+        // Find the job by its ID
+        Job job = jobRepository.findById(jobId).orElse(null);
+        if (job == null) {
+            throw new IllegalArgumentException("Job not found");
+        }
+
+        // Find the user by their ID
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // Assign the job to the user
+        job.setAssignedTo(user);  
+
+        // Save the updated job
+        jobRepository.save(job);
+    }
+}
